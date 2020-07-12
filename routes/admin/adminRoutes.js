@@ -3,7 +3,7 @@ const router = require('express').Router();
 const { validationResult } = require('express-validator');
 const { waterfall } = require('async');
 const faker = require('faker');
-
+const addProduct = require('./helpers/createProducts')
 const Product = require('./products/models/Product');
 const Category = require('./categories/models/Category');
 const checkCategory = require('./categories/utils/checkCategory');
@@ -21,14 +21,22 @@ router.post('/add-category', checkCategory, (req, res, next) => {
   }
 
   const category = new Category();
+  
   category.name = req.body.name;
+
 
   category
     .save()
     .then((savedCategory) => {
-      // return res.redirect('/api/admin/add-category');
-      //   res.json({ message: 'Success', category: savedCategory });
-      return res.redirect(`/api/admin/create-product/${savedCategory.name}`);
+                addProduct(savedCategory).then(()=> {
+                    req.flash('messages' , `Successfully added  ${savedCategory.name.toUpperCase()}`)
+                    return res.redirect('/api/admin/add-category')
+                })
+                .catch((err) => {
+                    console.log(err)
+                    req.flash('errors' , 'Unable to ADD')
+                    return res.redirect('/api/admin/add-category')
+                  })
     })
     .catch((err) => {
       if (err.code === 11000) {

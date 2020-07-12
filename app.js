@@ -5,20 +5,21 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const session = require('express-session');
-
+let MongoStore = require('connect-mongo')(session)
 const flash = require('connect-flash');
 const passport = require('passport');
 const methodOverride = require('method-override');
-
 require('dotenv').config();
-
-const Category = require('./routes/admin/categories/models/Category');
-const getAllCategories = require('./routes/admin/categories/middleware/getAllCategories');
-
+require('./lib/passport')
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users/usersRoutes');
 const adminRouter = require('./routes/admin/adminRoutes');
 const productRouter = require('./routes/admin/products/productRoutes');
+
+const Category = require('./routes/admin/categories/models/Category');
+const getAllCategories = require('./routes/admin/categories/middleware/getAllCategories');
+
+
 
 const app = express();
 
@@ -76,7 +77,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', indexRouter);
+app.use('/', indexRouter)
 app.use('/api/users', usersRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/products', productRouter);

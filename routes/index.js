@@ -24,10 +24,11 @@ const paginate = (req, res, next) => {
     });
 };
 
-router.get('/', function (req, res, next) {
+router.get('/', (req, res,next) => {
   if (req.user) {
-    return res.render('main/home');
+    return paginate(req,res,next);
   }
+   return res.render('main/home')
   // res.redirect('/api/users/register');
 });
 
